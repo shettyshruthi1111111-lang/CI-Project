@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo '📦 Cloning repository from GitHub...'
-                git branch: 'master', url: 'https://github.'
+                git branch: 'main', url: 'https://github.com/shettyshruthi1111111-lang/CI-Project.git'
             }
         }
 
@@ -56,8 +56,8 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                     sh '''
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push manjukolkar007/ecommerce-app:${BUILD_NUMBER}
-                        docker push manjukolkar007/ecommerce-app:latest
+                        docker push shettyshruthi1111111/ecommerce-app:${BUILD_NUMBER}
+                        docker push mshettyshruthi1111111/ecommerce-app:latest
                     '''
                 }
             }
