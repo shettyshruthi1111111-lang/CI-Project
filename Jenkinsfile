@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'shettyshruthi1111111/ecommerce-app'   // Your Docker Hub repo
+        DOCKER_HUB_REPO = 'shettyshruthi1111111/ecommerce-app'
     }
 
     stages {
@@ -25,14 +25,16 @@ pipeline {
             steps {
                 echo '🔍 Running SonarQube static code analysis...'
                 withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        sonar-scanner \
+                    withCredentials([string(credentialsId: 'SONAR_AUTH_TOKEN', variable: 'SONAR_TOKEN')]) {
+                        sh """
+                        /opt/sonar-scanner/bin/sonar-scanner \
                           -Dsonar.projectKey=ecommerce-app \
-                          -Dsonar.projectName="E-Commerce Application" \
-                          -Dsonar.sources=server,public \
+                          -Dsonar.projectName='E-Commerce Application' \
+                          -Dsonar.sources=. \
                           -Dsonar.host.url=$SONAR_HOST_URL \
-                          -Dsonar.login=$SONAR_AUTH_TOKEN
-                    '''
+                          -Dsonar.login=$SONAR_TOKEN
+                        """
+                    }
                 }
             }
         }
@@ -54,11 +56,11 @@ pipeline {
             steps {
                 echo '🚀 Pushing image to Docker Hub...'
                 withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
+                    sh """
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker push shettyshruthi1111111/ecommerce-app:${BUILD_NUMBER}
-                        docker push mshettyshruthi1111111/ecommerce-app:latest
-                    '''
+                        docker push ${DOCKER_HUB_REPO}:${BUILD_NUMBER}
+                        docker push ${DOCKER_HUB_REPO}:latest
+                    """
                 }
             }
         }
