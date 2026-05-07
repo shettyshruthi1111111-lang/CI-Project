@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_HUB_REPO = 'shettyshruthi11111111/ecommerce-app'
+        DOCKER_HUB_REPO = 'shettyshruthi1111111/ecommerce-app'
     }
 
     stages {
